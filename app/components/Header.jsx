@@ -5,10 +5,7 @@ const Header = ({ currentView, setCurrentView }) => {
   return (
     <header
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "15px 20px",
+        // ヘッダーの背景色や影、位置などの全体的なスタイル
         backgroundColor: "#3498db", // 青色
         color: "white",
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -18,42 +15,57 @@ const Header = ({ currentView, setCurrentView }) => {
         zIndex: 1000, // 他のコンテンツの上に表示
       }}
     >
-      <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>GFwalk(仮)</div>
-      <nav>
-        <button
-          onClick={() => setCurrentView("home")}
-          style={{
-            background: "none",
-            border: "none",
-            color: "white",
-            fontSize: "1em",
-            cursor: "pointer",
-            marginRight: "15px",
-            padding: "8px 12px",
-            borderRadius: "8px",
-            transition: "background-color 0.3s ease",
-            backgroundColor: currentView === "home" ? "#2980b9" : "transparent",
-          }}
-        >
-          ホーム
-        </button>
-        <button
-          onClick={() => setCurrentView("map")}
-          style={{
-            background: "none",
-            border: "none",
-            color: "white",
-            fontSize: "1em",
-            cursor: "pointer",
-            padding: "8px 12px",
-            borderRadius: "8px",
-            transition: "background-color 0.3s ease",
-            backgroundColor: currentView === "map" ? "#2980b9" : "transparent",
-          }}
-        >
-          マップ
-        </button>
-      </nav>
+      {/* ヘッダーのコンテンツ（アプリ名とナビゲーション）を囲む内側のコンテナ */}
+      {/* このコンテナでコンテンツの最大幅と中央寄せ、左右のパディングを制御します */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between", // アプリ名とボタンを左右に配置
+          alignItems: "center",
+          maxWidth: "1200px", // コンテンツの最大幅を設定（デスクトップなどで広がりすぎないように）
+          margin: "0 auto", // コンテンツを中央寄せ
+          padding: "15px 20px", // ここで左右のパディングを設定（コンテンツの内側）
+        }}
+      >
+        <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>GFwalk(仮)</div>
+        <nav>
+          <button
+            onClick={() => setCurrentView("home")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "white",
+              fontSize: "1em",
+              cursor: "pointer",
+              marginRight: "15px",
+              padding: "8px 12px",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+              backgroundColor:
+                currentView === "home" ? "#2980b9" : "transparent", // アクティブなボタンの色
+            }}
+          >
+            ホーム
+          </button>
+          <button
+            onClick={() => setCurrentView("map")}
+            style={{
+              background: "none",
+              border: "none",
+              color: "white",
+              fontSize: "1em",
+              cursor: "pointer",
+              padding: "8px 12px",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+              backgroundColor:
+                currentView === "map" ? "#2980b9" : "transparent", // アクティブなボタンの色
+            }}
+          >
+            マップ
+          </button>
+        </nav>
+      </div>
     </header>
   );
 };

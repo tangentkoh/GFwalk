@@ -1,4 +1,4 @@
-// app/components/Map.jsx
+// app/components/MapContent.jsx
 "use client"; // クライアントサイドでのみ動作するコンポーネントとしてマーク
 
 import React from "react";
@@ -23,7 +23,7 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
 
-const Map = ({ position, loading, error }) => {
+const MapContent = ({ position, loading, error }) => {
   // MapContentコンポーネントがマウントされた時にLeafletアイコンの修正を行う
   // これにより、windowオブジェクトが利用可能であることを保証
   React.useEffect(() => {
@@ -131,4 +131,4 @@ const Map = ({ position, loading, error }) => {
   );
 };
 
-export default Map;
+export default MapContent;

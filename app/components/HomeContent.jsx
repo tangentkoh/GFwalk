@@ -1,7 +1,7 @@
-// app/components/Home.jsx
+// app/components/HomeContent.jsx
 import React from "react";
 
-const Home = () => {
+const HomeContent = () => {
   return (
     <div
       style={{
@@ -40,4 +40,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeContent;

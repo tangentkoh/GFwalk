@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from "react";
 import Header from "./components/Header"; // Headerコンポーネントをインポート
-import Home from "./components/Home"; // Homeコンポーネントをインポート
-import Map from "./components/Map"; // Mapコンポーネントをインポート
+import HomeContent from "./components/HomeContent"; // HomeContentコンポーネントをインポート
+import MapContent from "./components/MapContent"; // MapContentコンポーネントをインポート
 
 export default function Home() {
   const [currentView, setCurrentView] = useState("home"); // 'home' または 'map'
@@ -56,10 +56,10 @@ export default function Home() {
 
       {/* 現在のビューに応じてコンテンツを切り替える */}
       {currentView === "home" ? (
-        <Home />
+        <HomeContent />
       ) : (
         // MapContentコンポーネントに位置情報関連のstateをpropsとして渡す
-        <Map position={position} loading={loading} error={error} />
+        <MapContent position={position} loading={loading} error={error} />
       )}
     </div>
   );
