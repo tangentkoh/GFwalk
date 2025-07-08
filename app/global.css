@@ -1,0 +1,17 @@
+/* app/globals.css */
+
+/* Tailwind CSSのプリフライトスタイル (もし使用している場合) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#__next {
+  height: 100%; /* ビューポートの高さに合わせる */
+  margin: 0; /* デフォルトのマージンをなくす */
+  padding: 0; /* デフォルトのパディングをなくす */
+  overflow: hidden; /* 全体でスクロールバーが出ないようにする */
+}
+
+/* その他のグローバルスタイル */
