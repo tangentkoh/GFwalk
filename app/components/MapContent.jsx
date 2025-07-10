@@ -1,7 +1,7 @@
 // app/components/MapContent.jsx
 "use client"; // クライアントサイドでのみ動作するコンポーネントとしてマーク
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic"; // next/dynamicをインポート
 import "leaflet/dist/leaflet.css"; // LeafletのCSSをインポート
 
@@ -23,12 +23,26 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
 
+// 事前定義されたマーカーのデータ
+// ここに表示したい場所の緯度経度と名前を追加してください
+const predefinedMarkers = [
+  { position: [35.434, 136.782], name: "岐阜城" }, // ok
+  { position: [35.435, 136.774], name: "岐阜公園" }, // ok
+  { position: [35.441, 136.776], name: "長良川温泉" }, // ok
+  { position: [35.409, 136.757], name: "JR岐阜駅" }, // ok
+  { position: [35.433, 136.773], name: "岐阜市歴史博物館" }, // ok
+];
+
 const MapContent = ({ position, loading, error }) => {
-  // MapContentコンポーネントがマウントされた時にLeafletアイコンの修正を行う
-  // これにより、windowオブジェクトが利用可能であることを保証
-  React.useEffect(() => {
+  // カスタムマーカーアイコンの状態
+  const [customGreenIcon, setCustomGreenIcon] = useState(null);
+
+  // MapContentコンポーネントがマウントされた時にLeafletアイコンの修正とカスタムアイコンの作成を行う
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const L = require("leaflet");
+
+      // デフォルトのLeafletアイコンが壊れる問題への対処
       delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
@@ -37,6 +51,17 @@ const MapContent = ({ position, loading, error }) => {
         shadowUrl:
           "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
       });
+
+      // 緑色のカスタムマーカーアイコンを作成
+      // L.divIcon を使用して、HTML要素をアイコンとしてレンダリングします
+      const greenIcon = L.divIcon({
+        className: "custom-green-marker", // 必要であればCSSでさらにスタイルを適用するためのクラス名
+        html: "<div style='background-color:#28a745; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);'></div>",
+        iconSize: [24, 24], // アイコンのサイズ (幅, 高さ)
+        iconAnchor: [12, 12], // アイコンのアンカーポイント (中心)
+        popupAnchor: [0, -12], // ポップアップのアンカーポイント (アイコンの少し上)
+      });
+      setCustomGreenIcon(greenIcon); // 作成したアイコンをstateに保存
     }
   }, []); // 空の依存配列で一度だけ実行
 
@@ -94,9 +119,10 @@ const MapContent = ({ position, loading, error }) => {
     <div
       style={{
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        flexGrow: 1, // 残りのスペースを埋める
+        flexGrow: 1,
         padding: "20px",
         backgroundColor: "#f0f0f0",
       }}
@@ -125,6 +151,17 @@ const MapContent = ({ position, loading, error }) => {
           <Marker position={position}>
             <Popup>現在地</Popup>
           </Marker>
+
+          {customGreenIcon &&
+            predefinedMarkers.map((marker, index) => (
+              <Marker
+                key={index}
+                position={marker.position}
+                icon={customGreenIcon}
+              >
+                <Popup>{marker.name}</Popup>
+              </Marker>
+            ))}
         </MapContainer>
       </div>
     </div>
