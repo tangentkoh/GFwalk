@@ -17,7 +17,7 @@ const HomeContent = () => {
       }}
     >
       <h2 style={{ color: "#333", marginBottom: "15px" }}>
-        GFwalkへようこそ！
+        "GFwalk!"へようこそ！
       </h2>
       <p style={{ color: "#555", lineHeight: "1.6" }}>
         このアプリは、あなたの現在位置周辺の地図を表示し、
