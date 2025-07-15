@@ -52,8 +52,8 @@ const MapContent = ({ position, loading, error }) => {
   const [visitedMarkers, setVisitedMarkers] = useState({});
 
   // 距離の閾値 (キロメートル)
-  const interactiveRadiusKm = 0.5; // 500m以内
-  const visibleRadiusKm = 2; // 2km以内 (青い円の範囲)
+  const interactiveRadiusKm = 2.5; // 500m以内
+  const visibleRadiusKm = 5; // 2km以内 (青い円の範囲)
 
   // カスタムマーカーアイコンの状態
   const [redIcon, setRedIcon] = useState(null);
