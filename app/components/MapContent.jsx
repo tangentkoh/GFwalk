@@ -51,12 +51,14 @@ const MapContent = ({ position, loading, error }) => {
   // キーはマーカーID、値はtrue/false
   const [visitedMarkers, setVisitedMarkers] = useState({});
 
-  // 表示範囲の半径 (キロメートル)
-  const visibleRadiusKm = 4; // 例: 2km以内
+  // 距離の閾値 (キロメートル)
+  const interactiveRadiusKm = 0.5; // 500m以内
+  const visibleRadiusKm = 2; // 2km以内 (青い円の範囲)
 
   // カスタムマーカーアイコンの状態
   const [redIcon, setRedIcon] = useState(null);
   const [greenIcon, setGreenIcon] = useState(null);
+  const [greyIcon, setGreyIcon] = useState(null); // グレーアイコンを追加
 
   // MapContentコンポーネントがマウントされた時にLeafletアイコンの修正とカスタムアイコンの作成を行う
   useEffect(() => {
@@ -92,10 +94,20 @@ const MapContent = ({ position, loading, error }) => {
         popupAnchor: [0, -12],
       });
       setGreenIcon(createGreenIcon);
+
+      // グレー色のカスタムマーカーアイコンを作成
+      const createGreyIcon = L.divIcon({
+        className: "custom-grey-marker",
+        html: "<div style='background-color:#6c757d; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);'></div>",
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12],
+      });
+      setGreyIcon(createGreyIcon);
     }
   }, []); // 空の依存配列で一度だけ実行
 
-  // マーカーがクリックされた時のハンドラー
+  // マーカーがクリックされた時のハンドラー (インタラクティブマーカー用)
   const handleMarkerClick = (markerId) => {
     setVisitedMarkers((prev) => ({
       ...prev,
@@ -103,21 +115,54 @@ const MapContent = ({ position, loading, error }) => {
     }));
   };
 
-  // 現在位置から一定距離以内のマーカーをフィルタリング
-  // position または visibleRadiusKm が変更された場合にのみ再計算
-  const filteredMarkers = useMemo(() => {
-    if (!position) return []; // 現在地が取得できていない場合は空の配列を返す
+  // 現在位置からの距離と訪問済み状態に基づいてマーカーを分類し、表示するマーカーを決定
+  const displayableMarkers = useMemo(() => {
+    if (!position) return [];
 
-    return predefinedMarkers.filter((marker) => {
-      const distance = calculateDistance(
-        position[0],
-        position[1],
-        marker.position[0],
-        marker.position[1]
-      );
-      return distance <= visibleRadiusKm;
-    });
-  }, [position, visibleRadiusKm]);
+    return predefinedMarkers
+      .filter((marker) => {
+        const distance = calculateDistance(
+          position[0],
+          position[1],
+          marker.position[0],
+          marker.position[1]
+        );
+        const isVisited = visitedMarkers[marker.id];
+
+        // 訪問済みマーカーは常に表示
+        // 未訪問マーカーは2km以内なら表示
+        return isVisited || distance <= visibleRadiusKm;
+      })
+      .map((marker) => {
+        const distance = calculateDistance(
+          position[0],
+          position[1],
+          marker.position[0],
+          marker.position[1]
+        );
+        const isVisited = visitedMarkers[marker.id];
+
+        let status;
+        if (isVisited) {
+          status = "visited"; // 訪問済みマーカー (常に緑)
+        } else if (distance <= interactiveRadiusKm) {
+          status = "interactive"; // 500m以内、未訪問 (赤)
+        } else if (
+          distance > interactiveRadiusKm &&
+          distance <= visibleRadiusKm
+        ) {
+          status = "grey"; // 500m超2km以内、未訪問 (灰色)
+        } else {
+          status = "hidden"; // 2km超、未訪問 (非表示)
+        }
+        return { ...marker, status, distance };
+      });
+  }, [position, interactiveRadiusKm, visibleRadiusKm, visitedMarkers]); // visitedMarkers を依存配列に追加
+
+  // 訪問済みマーカーの数を計算
+  const visitedCount = useMemo(() => {
+    return Object.values(visitedMarkers).filter(Boolean).length;
+  }, [visitedMarkers]);
 
   // ローディング中の表示
   if (loading) {
@@ -184,10 +229,37 @@ const MapContent = ({ position, loading, error }) => {
         backgroundColor: "#f0f0f0",
       }}
     >
+      {/* マーカー数の表示 (1行にまとめる) */}
+      <div
+        style={{
+          marginBottom: "15px",
+          textAlign: "center",
+          backgroundColor: "white",
+          padding: "10px 20px",
+          borderRadius: "10px",
+          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+          color: "#333",
+          fontSize: "0.95em",
+          width: "90vw",
+          maxWidth: "1000px",
+          display: "flex", // Flexboxを使用
+          justifyContent: "space-around", // 均等に配置
+          alignItems: "center",
+          flexWrap: "wrap", // 小さい画面で折り返す
+        }}
+      >
+        <p style={{ margin: "0 10px" }}>
+          全マーカー数: <strong>{predefinedMarkers.length}</strong> 個
+        </p>
+        <p style={{ margin: "0 10px" }}>
+          訪れたマーカー数: <strong>{visitedCount}</strong> 個
+        </p>
+      </div>
+
       {/* 地図コンテナ */}
       <div
         style={{
-          height: "calc(100vh - 150px)", // ヘッダーと上下のパディングを考慮して高さを調整
+          height: "calc(100vh - 220px)", // ヘッダー、マーカー数表示、上下のパディングを考慮して高さを調整
           width: "90vw",
           maxWidth: "1000px",
           borderRadius: "15px",
@@ -211,7 +283,7 @@ const MapContent = ({ position, loading, error }) => {
             <Popup>現在地</Popup>
           </Marker>
 
-          {/* 現在位置からの表示範囲を示す円 */}
+          {/* 現在位置からの表示範囲を示す円 (2km) */}
           <Circle
             center={position}
             radius={visibleRadiusKm * 1000} // 半径をメートルで指定 (2km = 2000m)
@@ -224,27 +296,67 @@ const MapContent = ({ position, loading, error }) => {
             }}
           />
 
-          {/* フィルタリングされた事前定義マーカーをループして表示 */}
+          {/* 表示可能なマーカーをループしてレンダリング */}
           {redIcon &&
             greenIcon &&
-            filteredMarkers.map((marker) => (
-              <Marker
-                key={marker.id} // 各マーカーにユニークなキーを設定
-                position={marker.position}
-                // 訪問済みかどうかでアイコンを切り替える
-                icon={visitedMarkers[marker.id] ? greenIcon : redIcon}
-                eventHandlers={{
-                  click: () => handleMarkerClick(marker.id), // クリックハンドラーを設定
-                }}
-              >
-                <Popup>
-                  <strong>{marker.name}</strong>
-                  <br />
-                  {marker.description || "説明"}{" "}
-                  {/* 説明を表示、なければデフォルト */}
-                </Popup>
-              </Marker>
-            ))}
+            greyIcon &&
+            displayableMarkers.map((marker) => {
+              let iconToUse;
+              let popupContent;
+              let clickHandler = null; // デフォルトではクリックハンドラーなし
+
+              if (marker.status === "visited") {
+                // 訪問済みマーカー: 緑色アイコン、通常ポップアップ
+                iconToUse = greenIcon;
+                popupContent = (
+                  <>
+                    <strong>{marker.name}</strong>
+                    <br />
+                    {marker.description || "ここに説明"}
+                  </>
+                );
+              } else if (marker.status === "interactive") {
+                // インタラクティブマーカー: 未訪問なら赤、訪問済みなら緑、クリックで訪問状態に
+                iconToUse = visitedMarkers[marker.id] ? greenIcon : redIcon;
+                popupContent = (
+                  <>
+                    <strong>{marker.name}</strong>
+                    <br />
+                    {marker.description || "ここに説明"}
+                  </>
+                );
+                clickHandler = () => handleMarkerClick(marker.id);
+              } else if (marker.status === "grey") {
+                // グレーマーカー: 灰色アイコン、クリックで「???」ポップアップ
+                iconToUse = greyIcon;
+                popupContent = (
+                  <>
+                    <strong>???</strong>
+                    <br />
+                    ???
+                  </>
+                );
+                // グレーマーカーはクリックで色が変わらないため、handleMarkerClickは呼ばない
+                // Leafletのデフォルトのクリックでポップアップが開く
+              } else {
+                // hidden状態のマーカーはレンダリングしない
+                return null;
+              }
+
+              if (!iconToUse) return null; // アイコンがまだロードされていない場合はレンダリングしない
+
+              return (
+                <Marker
+                  key={marker.id}
+                  position={marker.position}
+                  icon={iconToUse}
+                  // clickHandlerが存在する場合のみeventHandlersを設定
+                  eventHandlers={clickHandler ? { click: clickHandler } : {}}
+                >
+                  <Popup>{popupContent}</Popup>
+                </Marker>
+              );
+            })}
         </MapContainer>
       </div>
     </div>
