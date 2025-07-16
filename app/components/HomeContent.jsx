@@ -20,12 +20,14 @@ const HomeContent = () => {
         "GFwalk!"へようこそ！
       </h2>
       <p style={{ color: "#555", lineHeight: "1.6" }}>
-        このアプリは、あなたの現在位置周辺の地図を表示し、
+        このアプリは、様々なアーキテクチャを持っており、
         <br />
-        様々な情報を探索するのに役立ちます。
+        GF（岐阜）をゲーム感覚で探索することができます。
       </p>
       <p style={{ color: "#555", marginTop: "10px" }}>
-        「マップ」ボタンをクリックして、地図機能をお試しください。
+        まずは「マップ」ボタンを押して、基本機能をお試しください。
+        <br />
+        その後、他の機能についても使ってみてくださいな。
       </p>
       <img
         src="https://placehold.co/300x200/aabbcc/ffffff?text=Welcome+Image"

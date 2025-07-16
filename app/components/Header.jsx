@@ -5,7 +5,6 @@ const Header = ({ currentView, setCurrentView }) => {
   return (
     <header
       style={{
-        // ヘッダーの背景色や影、位置などの全体的なスタイル
         backgroundColor: "#3498db", // 青色
         color: "white",
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -16,7 +15,6 @@ const Header = ({ currentView, setCurrentView }) => {
       }}
     >
       {/* ヘッダーのコンテンツ（アプリ名とナビゲーション）を囲む内側のコンテナ */}
-      {/* このコンテナでコンテンツの最大幅と中央寄せ、左右のパディングを制御します */}
       <div
         style={{
           display: "flex",
@@ -27,7 +25,32 @@ const Header = ({ currentView, setCurrentView }) => {
           padding: "15px 20px", // ここで左右のパディングを設定（コンテンツの内側）
         }}
       >
-        <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>GFwalk(仮)</div>
+        {/* アプリ名とアイコンのコンテナ */}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {/* アイコンのSVG */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ marginRight: "10px" }} // テキストとの間にマージン
+          >
+            <path d="M18 20V10"></path>
+            <path d="M12 20V4"></path>
+            <path d="M6 20v-6"></path>
+            <path d="M2 19l2-2 2 2"></path>
+            <path d="M18 13l2-2 2 2"></path>
+            <path d="M12 7l2-2 2 2"></path>
+          </svg>
+          <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
+            GFwalk(仮)
+          </div>
+        </div>
         <nav>
           <button
             onClick={() => setCurrentView("home")}
