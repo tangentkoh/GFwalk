@@ -52,7 +52,7 @@ const MapContent = ({ position, loading, error }) => {
   const [visitedMarkers, setVisitedMarkers] = useState({});
 
   // 距離の閾値 (キロメートル)
-  const interactiveRadiusKm = 0.4; // 500m以内
+  const interactiveRadiusKm = 0.5; // 500m以内
   const visibleRadiusKm = 2; // 2km以内 (青い円の範囲)
 
   // カスタムマーカーアイコンの状態
@@ -304,6 +304,7 @@ const MapContent = ({ position, loading, error }) => {
               let iconToUse;
               let popupContent;
               let clickHandler = null; // デフォルトではクリックハンドラーなし
+              let imageSrc = marker.image; // マーカーに設定された画像パス
 
               if (marker.status === "visited") {
                 // 訪問済みマーカー: 緑色アイコン、通常ポップアップ
@@ -313,6 +314,23 @@ const MapContent = ({ position, loading, error }) => {
                     <strong>{marker.name}</strong>
                     <br />
                     {marker.description || "ここに説明"}
+                    <br />
+                    {imageSrc && (
+                      <img
+                        src={imageSrc}
+                        alt={marker.name}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          marginTop: "10px",
+                          borderRadius: "5px",
+                        }}
+                        onError={(e) => {
+                          e.target.src =
+                            "https://placehold.co/150x100/eeeeee/333333?text=No+Image";
+                        }} // エラー時のフォールバック
+                      />
+                    )}
                   </>
                 );
               } else if (marker.status === "interactive") {
@@ -323,6 +341,23 @@ const MapContent = ({ position, loading, error }) => {
                     <strong>{marker.name}</strong>
                     <br />
                     {marker.description || "ここに説明"}
+                    <br />
+                    {imageSrc && (
+                      <img
+                        src={imageSrc}
+                        alt={marker.name}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          marginTop: "10px",
+                          borderRadius: "5px",
+                        }}
+                        onError={(e) => {
+                          e.target.src =
+                            "https://placehold.co/150x100/eeeeee/333333?text=No+Image";
+                        }} // エラー時のフォールバック
+                      />
+                    )}
                   </>
                 );
                 clickHandler = () => handleMarkerClick(marker.id);
@@ -334,6 +369,17 @@ const MapContent = ({ position, loading, error }) => {
                     <strong>???</strong>
                     <br />
                     ???
+                    <br />
+                    <img
+                      src="https://placehold.co/150x100/6c757d/ffffff?text=%3F%3F%3F" // グレーマーカー用の「???」画像
+                      alt="Unknown Image"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        marginTop: "10px",
+                        borderRadius: "5px",
+                      }}
+                    />
                   </>
                 );
                 // グレーマーカーはクリックで色が変わらないため、handleMarkerClickは呼ばない

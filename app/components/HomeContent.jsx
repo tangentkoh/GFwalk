@@ -30,12 +30,14 @@ const HomeContent = () => {
         その後、他の機能についても使ってみてくださいな。
       </p>
       <img
-        src="https://placehold.co/300x200/aabbcc/ffffff?text=Welcome+Image"
-        alt="Welcome"
+        src="/image/welcome.png" // public/image/welcome.png を参照
+        alt="Welcome to GFwalk"
         style={{
           marginTop: "30px",
           borderRadius: "10px",
           boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          maxWidth: "100%",
+          height: "auto",
         }}
       />
     </div>
