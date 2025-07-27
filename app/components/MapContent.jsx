@@ -46,14 +46,18 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return distance; // km
 };
 
-const MapContent = ({ position, loading, error }) => {
+const MapContent = ({
+  position,
+  loading,
+  error,
+  currentMode,
+  moveMarker,
+  interactiveRadiusKm,
+  visibleRadiusKm,
+}) => {
   // 訪問済みマーカーの状態を管理
   // キーはマーカーID、値はtrue/false
   const [visitedMarkers, setVisitedMarkers] = useState({});
-
-  // 距離の閾値 (キロメートル)
-  const interactiveRadiusKm = 2; // 500m以内
-  const visibleRadiusKm = 4; // 2km以内 (青い円の範囲)
 
   // カスタムマーカーアイコンの状態
   const [redIcon, setRedIcon] = useState(null);
@@ -130,7 +134,7 @@ const MapContent = ({ position, loading, error }) => {
         const isVisited = visitedMarkers[marker.id];
 
         // 訪問済みマーカーは常に表示
-        // 未訪問マーカーは2km以内なら表示
+        // 未訪問マーカーは visibleRadiusKm (モードによって異なる) 以内なら表示
         return isVisited || distance <= visibleRadiusKm;
       })
       .map((marker) => {
@@ -144,16 +148,16 @@ const MapContent = ({ position, loading, error }) => {
 
         let status;
         if (isVisited) {
-          status = "visited"; // 訪問済みマーカー(常に緑)
+          status = "visited"; // 訪問済みマーカー (常に緑)
         } else if (distance <= interactiveRadiusKm) {
-          status = "interactive"; // 未訪問 (赤)
+          status = "interactive"; // interactiveRadiusKm (モードによって異なる) 以内、未訪問 (赤)
         } else if (
           distance > interactiveRadiusKm &&
           distance <= visibleRadiusKm
         ) {
-          status = "grey"; // 未訪問 (灰色)
+          status = "grey"; // interactiveRadiusKm超～visibleRadiusKm以内、未訪問 (灰色)
         } else {
-          status = "hidden"; // 未訪問 (非表示)
+          status = "hidden"; // visibleRadiusKm超、未訪問 (非表示)
         }
         return { ...marker, status, distance };
       });
@@ -182,7 +186,8 @@ const MapContent = ({ position, loading, error }) => {
   }
 
   // エラー発生時の表示
-  if (error) {
+  if (error && currentMode === "legacy") {
+    // レガシィモードでのみエラーを表示
     return (
       <div
         style={{
@@ -196,11 +201,12 @@ const MapContent = ({ position, loading, error }) => {
       >
         <p>エラー: {error}</p>
         <p>位置情報の利用を許可してください。</p>
+        <p>または「リモートモード」をお試しください。</p>
       </div>
     );
   }
 
-  // 位置情報が取得できなかった場合の表示
+  // 位置情報が取得できなかった場合の表示 (リモートモードでは表示されない)
   if (!position) {
     return (
       <div
@@ -252,14 +258,111 @@ const MapContent = ({ position, loading, error }) => {
           全マーカー数: <strong>{predefinedMarkers.length}</strong> 個
         </p>
         <p style={{ margin: "0 10px" }}>
-          訪れたマーカー数: <strong>{visitedCount}</strong> 個
+          訪マーカー数: <strong>{visitedCount}</strong> 個
         </p>
       </div>
+
+      {/* リモートモード時の移動ボタン */}
+      {currentMode === "remote" && (
+        <div
+          style={{
+            marginBottom: "15px",
+            backgroundColor: "white",
+            padding: "10px",
+            borderRadius: "10px",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column", // 縦に並べる
+            alignItems: "center",
+            width: "fit-content", // コンテンツに合わせて幅を調整
+            maxWidth: "90vw", // 画面幅に収まるように
+          }}
+        >
+          <p
+            style={{ margin: "0 0 10px 0", fontWeight: "bold", color: "#333" }}
+          >
+            リモートモード
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "5px",
+            }}
+          >
+            <div /> {/* 左上の空セル */}
+            <button
+              onClick={() => moveMarker("up")}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#e9e9e9",
+                cursor: "pointer",
+              }}
+            >
+              ↑
+            </button>
+            <div /> {/* 右上の空セル */}
+            <button
+              onClick={() => moveMarker("left")}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#e9e9e9",
+                cursor: "pointer",
+              }}
+            >
+              ←
+            </button>
+            <div
+              style={{
+                padding: "8px 12px",
+                textAlign: "center",
+                color: "#555",
+              }}
+            >
+              中心
+            </div>{" "}
+            {/* 中央の表示 */}
+            <button
+              onClick={() => moveMarker("right")}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#e9e9e9",
+                cursor: "pointer",
+              }}
+            >
+              →
+            </button>
+            <div /> {/* 左下の空セル */}
+            <button
+              onClick={() => moveMarker("down")}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#e9e9e9",
+                cursor: "pointer",
+              }}
+            >
+              ↓
+            </button>
+            <div /> {/* 右下の空セル */}
+          </div>
+        </div>
+      )}
 
       {/* 地図コンテナ */}
       <div
         style={{
-          height: "calc(100vh - 220px)", // ヘッダー、マーカー数表示、上下のパディングを考慮して高さを調整
+          height:
+            currentMode === "remote"
+              ? "calc(100vh - 400px)"
+              : "calc(100vh - 220px)", // リモートモードでは移動ボタンの分高さを調整
           width: "90vw",
           maxWidth: "1000px",
           borderRadius: "15px",
@@ -270,7 +373,7 @@ const MapContent = ({ position, loading, error }) => {
       >
         <MapContainer
           center={position} // 現在位置を中心に設定
-          zoom={14} // 初期ズームレベルを調整 (表示範囲に合わせて)
+          zoom={currentMode === "remote" ? 16 : 14} // リモートモードではよりズームイン
           scrollWheelZoom={true} // マウスホイールでのズームを許可
           style={{ height: "100%", width: "100%" }}
         >
@@ -283,16 +386,29 @@ const MapContent = ({ position, loading, error }) => {
             <Popup>現在地</Popup>
           </Marker>
 
-          {/* 現在位置からの表示範囲を示す円 (2km) */}
+          {/* 外側の表示範囲を示す円 (visibleRadiusKm を使用 - 薄い青色) */}
           <Circle
             center={position}
-            radius={visibleRadiusKm * 1000} // 半径をメートルで指定 (2km = 2000m)
+            radius={visibleRadiusKm * 1000} // 半径をメートルで指定
             pathOptions={{
               fillColor: "#3498db", // 薄い青色
               fillOpacity: 0.15, // 透明度
               color: "#3498db", // 線の色
               weight: 2, // 線の太さ
               opacity: 0.5, // 線の透明度
+            }}
+          />
+
+          {/* 内側のインタラクティブ範囲を示す円 (interactiveRadiusKm を使用 - 濃い青色) */}
+          <Circle
+            center={position}
+            radius={interactiveRadiusKm * 1000} // 半径をメートルで指定
+            pathOptions={{
+              fillColor: "#2196f3", // 濃い青色
+              fillOpacity: 0.25, // 透明度を少し上げる
+              color: "#2196f3", // 線の色
+              weight: 2, // 線の太さ
+              opacity: 0.7, // 線の透明度を上げる
             }}
           />
 

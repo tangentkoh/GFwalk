@@ -1,7 +1,12 @@
 // app/components/Header.jsx
 import React from "react";
 
-const Header = ({ currentView, setCurrentView }) => {
+const Header = ({
+  currentView,
+  setCurrentView,
+  currentMode,
+  setCurrentMode,
+}) => {
   return (
     <header
       style={{
@@ -23,10 +28,15 @@ const Header = ({ currentView, setCurrentView }) => {
           maxWidth: "1200px", // コンテンツの最大幅を設定（デスクトップなどで広がりすぎないように）
           margin: "0 auto", // コンテンツを中央寄せ
           padding: "15px 20px", // ここで左右のパディングを設定（コンテンツの内側）
+          flexWrap: "wrap", // 小さい画面でボタンが折り返すように
         }}
       >
         {/* アプリ名とアイコンのコンテナ */}
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
+        >
+          {" "}
+          {/* スマホ対応で下マージン追加 */}
           {/* あなたのアイコン画像へのパスを設定 */}
           <img
             src="/image/logo.png" // public/image/logo.png を参照
@@ -42,43 +52,98 @@ const Header = ({ currentView, setCurrentView }) => {
             GFwalk(仮)
           </div>
         </div>
-        <nav>
-          <button
-            onClick={() => setCurrentView("home")}
-            style={{
-              background: "none",
-              border: "none",
-              color: "white",
-              fontSize: "1em",
-              cursor: "pointer",
-              marginRight: "15px",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              transition: "background-color 0.3s ease",
-              backgroundColor:
-                currentView === "home" ? "#2980b9" : "transparent", // アクティブなボタンの色
-            }}
-          >
-            ホーム
-          </button>
-          <button
-            onClick={() => setCurrentView("map")}
-            style={{
-              background: "none",
-              border: "none",
-              color: "white",
-              fontSize: "1em",
-              cursor: "pointer",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              transition: "background-color 0.3s ease",
-              backgroundColor:
-                currentView === "map" ? "#2980b9" : "transparent", // アクティブなボタンの色
-            }}
-          >
-            マップ
-          </button>
-        </nav>
+
+        {/* ナビゲーションとモード選択ボタンのコンテナ */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
+          }}
+        >
+          {" "}
+          {/* スマホ対応で折り返し、右寄せ */}
+          <nav style={{ marginBottom: "5px" }}>
+            {" "}
+            {/* スマホ対応で下マージン追加 */}
+            <button
+              onClick={() => setCurrentView("home")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "white",
+                fontSize: "1em",
+                cursor: "pointer",
+                marginRight: "15px",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                transition: "background-color 0.3s ease",
+                backgroundColor:
+                  currentView === "home" ? "#2980b9" : "transparent", // アクティブなボタンの色
+              }}
+            >
+              ホーム
+            </button>
+            <button
+              onClick={() => setCurrentView("map")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "white",
+                fontSize: "1em",
+                cursor: "pointer",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                transition: "background-color 0.3s ease",
+                backgroundColor:
+                  currentView === "map" ? "#2980b9" : "transparent", // アクティブなボタンの色
+              }}
+            >
+              マップ
+            </button>
+          </nav>
+          {/* モード切り替えボタン */}
+          <div style={{ marginLeft: "20px" }}>
+            {" "}
+            {/* ナビゲーションボタンとの間にマージン */}
+            <button
+              onClick={() => setCurrentMode("legacy")}
+              style={{
+                background: "none",
+                border: "1px solid white", // ボーダーを追加して区別
+                color: "white",
+                fontSize: "0.9em",
+                cursor: "pointer",
+                marginRight: "10px",
+                padding: "6px 10px",
+                borderRadius: "8px",
+                transition: "background-color 0.3s ease",
+                backgroundColor:
+                  currentMode === "legacy" ? "#2980b9" : "transparent",
+              }}
+            >
+              レガシィ
+            </button>
+            <button
+              onClick={() => setCurrentMode("remote")}
+              style={{
+                background: "none",
+                border: "1px solid white", // ボーダーを追加して区別
+                color: "white",
+                fontSize: "0.9em",
+                cursor: "pointer",
+                padding: "6px 10px",
+                borderRadius: "8px",
+                transition: "background-color 0.3s ease",
+                backgroundColor:
+                  currentMode === "remote" ? "#2980b9" : "transparent",
+              }}
+            >
+              リモート
+            </button>
+          </div>
+        </div>
       </div>
     </header>
   );
