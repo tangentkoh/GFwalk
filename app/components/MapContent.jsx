@@ -52,8 +52,8 @@ const MapContent = ({ position, loading, error }) => {
   const [visitedMarkers, setVisitedMarkers] = useState({});
 
   // 距離の閾値 (キロメートル)
-  const interactiveRadiusKm = 0.5; // 500m以内
-  const visibleRadiusKm = 2; // 2km以内 (青い円の範囲)
+  const interactiveRadiusKm = 2; // 500m以内
+  const visibleRadiusKm = 4; // 2km以内 (青い円の範囲)
 
   // カスタムマーカーアイコンの状態
   const [redIcon, setRedIcon] = useState(null);
@@ -144,16 +144,16 @@ const MapContent = ({ position, loading, error }) => {
 
         let status;
         if (isVisited) {
-          status = "visited"; // 訪問済みマーカー (常に緑)
+          status = "visited"; // 訪問済みマーカー(常に緑)
         } else if (distance <= interactiveRadiusKm) {
-          status = "interactive"; // 500m以内、未訪問 (赤)
+          status = "interactive"; // 未訪問 (赤)
         } else if (
           distance > interactiveRadiusKm &&
           distance <= visibleRadiusKm
         ) {
-          status = "grey"; // 500m超2km以内、未訪問 (灰色)
+          status = "grey"; // 未訪問 (灰色)
         } else {
-          status = "hidden"; // 2km超、未訪問 (非表示)
+          status = "hidden"; // 未訪問 (非表示)
         }
         return { ...marker, status, distance };
       });
