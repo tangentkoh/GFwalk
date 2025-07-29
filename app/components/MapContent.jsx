@@ -54,6 +54,7 @@ const MapContent = ({
   moveMarker,
   interactiveRadiusKm,
   visibleRadiusKm,
+  remoteInitialPosition,
 }) => {
   // 訪問済みマーカーの状態を管理
   // キーはマーカーID、値はtrue/false
@@ -222,6 +223,8 @@ const MapContent = ({
       </div>
     );
   }
+  // 全モードで表示される固定の赤色円の半径
+  const fixedRedCircleRadiusKm = 10; // 10km
 
   return (
     <div
@@ -281,7 +284,7 @@ const MapContent = ({
           <p
             style={{ margin: "0 0 10px 0", fontWeight: "bold", color: "#333" }}
           >
-            リモートモード
+            リモート
           </p>
           <div
             style={{
@@ -373,7 +376,7 @@ const MapContent = ({
       >
         <MapContainer
           center={position} // 現在位置を中心に設定
-          zoom={currentMode === "remote" ? 16 : 14} // リモートモードではよりズームイン
+          zoom={currentMode === "remote" ? 14 : 14} // リモートモードではズームを14に設定し、目安円全体が見えるように
           scrollWheelZoom={true} // マウスホイールでのズームを許可
           style={{ height: "100%", width: "100%" }}
         >
@@ -411,6 +414,20 @@ const MapContent = ({
               opacity: 0.7, // 線の透明度を上げる
             }}
           />
+
+          {/* 全モードで表示される半径10kmの赤色の円 (淵のみ) */}
+          {remoteInitialPosition && ( // remoteInitialPositionが利用可能であることを確認
+            <Circle
+              center={remoteInitialPosition} // 岐阜駅を中心
+              radius={fixedRedCircleRadiusKm * 1000} // 半径10km
+              pathOptions={{
+                fillOpacity: 0, // 塗りつぶしなし
+                color: "#ff0000", // 赤色
+                weight: 2, // 線の太さ
+                opacity: 0.8, // 線の透明度
+              }}
+            />
+          )}
 
           {/* 表示可能なマーカーをループしてレンダリング */}
           {redIcon &&

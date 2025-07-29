@@ -16,8 +16,8 @@ export default function Home() {
 
   // リモートモード時の初期位置 (岐阜駅付近)
   const remoteInitialPosition = [35.41, 136.76];
-  // マーカー移動のステップ量 (約50m)
-  const moveStep = 0.0005;
+  // マーカー移動のステップ量 (約100m)
+  const moveStep = 0.001;
 
   // 位置情報を取得する関数 (Geolocation APIを使用)
   const fetchGeolocation = useCallback(() => {
@@ -95,14 +95,14 @@ export default function Home() {
   const getDetectionRanges = (mode) => {
     if (mode === "remote") {
       return {
-        interactive: 0.2, // 200m
-        visible: 1, // 1000m
+        interactive: 0.3, // 300m
+        visible: 1.5, // 1500m
       };
     } else {
       // legacy mode
       return {
-        interactive: 0.6, // 600m
-        visible: 3, // 3km
+        interactive: 0.9, // 900m
+        visible: 4.5, // 4.5km
       };
     }
   };
@@ -139,6 +139,7 @@ export default function Home() {
           moveMarker={moveMarker} // リモートモードでの移動関数
           interactiveRadiusKm={ranges.interactive} // モードに応じて範囲を調整
           visibleRadiusKm={ranges.visible} // モードに応じて範囲を調整
+          remoteInitialPosition={remoteInitialPosition} // リモートモードの初期位置を渡す
         />
       )}
     </div>
