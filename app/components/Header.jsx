@@ -48,9 +48,7 @@ const Header = ({
               borderRadius: "5px",
             }} // サイズとマージンを調整
           />
-          <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
-            GFwalk(仮)
-          </div>
+          <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>GFwalk</div>
         </div>
 
         {/* ナビゲーションとモード選択ボタンのコンテナ */}
