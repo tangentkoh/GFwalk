@@ -49,6 +49,7 @@ const markers = [
     name: "JR岐阜駅",
     description: "岐阜市の主要駅、金の織田信長が居る",
     image: "/image/JR岐阜駅.png",
+    panoramaImage: "/360/JR岐阜駅_360.png",
   },
   {
     id: "yanagase_shopping_street",

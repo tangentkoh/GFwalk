@@ -95,14 +95,14 @@ export default function Home() {
   const getDetectionRanges = (mode) => {
     if (mode === "remote") {
       return {
-        interactive: 0.3, // 300m
-        visible: 1.5, // 1500m
+        interactive: 0.2, // 200m
+        visible: 1, // 1000m
       };
     } else {
       // legacy mode
       return {
-        interactive: 0.9, // 900m
-        visible: 4.5, // 4.5km
+        interactive: 0.5, // 500m
+        visible: 2.5, // 2.5km
       };
     }
   };
