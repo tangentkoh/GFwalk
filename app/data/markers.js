@@ -72,6 +72,41 @@ const markers = [
     description: "岐阜市にある国立大学、研究と教育の拠点",
     image: "/image/岐阜大学.png",
   },
+  {
+    id: "inaba_shrine",
+    position: [35.428, 136.77],
+    name: "伊奈波神社",
+    description: "長い歴史を持つ、岐阜を構成する文化財",
+    image: "/image/伊奈波神社.png",
+  },
+  {
+    id: "kawara_town",
+    position: [35.437, 136.771],
+    name: "河原町",
+    description: "残された古い町並み、歴史の重み",
+    image: "/image/河原町.png",
+  },
+  {
+    id: "gihu_memorial_centre",
+    position: [35.442, 136.764],
+    name: "岐阜メモリアルセンター",
+    description: "スポーツと文化の中心地、都市公園としても",
+    image: "/image/岐阜メモリアルセンター.png",
+  },
+  {
+    id: "nagara_park",
+    position: [35.447, 136.783],
+    name: "長良公園",
+    description: "翠色の自然と、蒼色の天空",
+    image: "/image/長良公園.png",
+  },
+  {
+    id: "ukai_bigbridge",
+    position: [35.44, 136.795],
+    name: "鵜飼大橋",
+    description: "長良川に架かる大きな橋、白色のストラクチャー",
+    image: "/image/鵜飼大橋.png",
+  },
 ];
 
 export default markers;
